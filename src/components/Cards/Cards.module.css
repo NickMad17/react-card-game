@@ -88,6 +88,7 @@
   margin-bottom: 15px;
 }
 
+
 @keyframes opasity {
   0% {
     transform: rotateX(180deg);

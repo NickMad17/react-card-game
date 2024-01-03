@@ -78,12 +78,12 @@
   perspective: 1000px;
 }
 
-@media (hover: hover) {
-  .flipContainer:hover .flipper {
-    transition: 0.2s;
-    transform: rotateY(25deg);
-  }
-}
+/*@media (hover: hover) {*/
+/*  .flipContainer:hover .flipper {*/
+/*    transition: 0.2s;*/
+/*    transform: rotateY(25deg);*/
+/*  }*/
+/*}*/
 
 
 

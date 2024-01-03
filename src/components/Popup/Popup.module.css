@@ -1,0 +1,51 @@
+.popupBg {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    opacity: 0.6;
+    background: #004980;
+    z-index: 100;
+    top: 0;
+    left: 0;
+}
+
+.popup {
+    z-index: 400;
+    opacity: 1;
+    min-width: 176px;
+    max-width: 180px;
+    background: #C2F5FF;
+    color: #004980;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    border-radius: 12px;
+    padding: 15px 20px;
+    text-align: center;
+    animation: opacity 0.2s linear;
+}
+
+.popup p {
+    color: #004980;
+
+    margin-bottom: 10px;
+    text-align: center;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px;
+}
+
+@keyframes opacity {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

@@ -1,6 +1,7 @@
 
 
 .container {
+  position: relative;
   width: 100%;
   min-height: 100%;
   display: flex;
@@ -27,7 +28,63 @@
   font-size: 40px;
   font-style: normal;
   font-weight: 400;
-  line-height: 48px;
+}
+
+.nameBox{
+  position: absolute;
+  left: auto;
+  right: auto;
+  top: 10vh;
+  width: 480px;
+  display: flex;
+  justify-content: center;
+  animation: topName 0.5s ease;
+}
+
+.name{
+  text-align: center;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-family: StratosSkyeng;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+/*name*/
+
+.input {
+  margin: 30px;
+  width: 50%;
+  height: 35px;
+  text-align: center;
+  border-radius: 20px;
+  background: transparent;
+  border: 2px #004980 solid;
+  font-size: 30px;
+  color: #7ac100;
+  animation: scaleInput 0.5s linear;
+}
+
+/*level*/
+
+.linkName {
+  margin-top: 5px;
+  text-decoration: none;
+  color: #004980;
+  font-size: 20px;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  transition: background-size .3s;
+  animation: left 0.5s ease;
+}
+
+.linkName:hover {
+  cursor: pointer;
+  background-size: 100% 2px;
 }
 
 .levels {
@@ -36,6 +93,7 @@
   gap: 26px;
   margin-top: 48px;
   margin-bottom: 28px;
+  animation: top 0.3s ease;
 }
 
 .level {
@@ -104,5 +162,41 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes top {
+  0% {
+    opacity: 0;
+    margin-top: 200px;
+  }
+  100% {
+    opacity: 1;
+    margin-left: 0;
+  }
+}
+
+@keyframes topName {
+  0% {
+    opacity: 0;
+    top: -10px;
+  }
+
+  100% {
+    opacity: 1;
+    top: 10vh;
+  }
+}
+
+@keyframes scaleInput {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+    padding: 100px;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    padding: 0;
   }
 }

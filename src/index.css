@@ -8,6 +8,10 @@ body {
   height: 100vh;
 }
 
+body::-webkit-scrollbar {
+  width: 0;                 /* ширина scrollbar */
+}
+
 #root {
   width: 100%;
   height: 100%;

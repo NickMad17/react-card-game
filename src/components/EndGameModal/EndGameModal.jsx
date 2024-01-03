@@ -4,6 +4,7 @@ import { Button } from "../Button/Button";
 
 import deadImageUrl from "./images/dead.png";
 import celebrationImageUrl from "./images/celebration.png";
+import LeaderBordLink from "../LeaderBordLink/LeaderBordLink";
 
 export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, onClick }) {
   const title = isWon ? "Вы победили!" : "Вы проиграли!";
@@ -22,6 +23,10 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
       </div>
 
       <Button onClick={onClick}>Начать сначала</Button>
+
+      <LeaderBordLink>
+        Перейти к лидерборду
+      </LeaderBordLink>
     </div>
   );
 }

@@ -1,0 +1,29 @@
+.link{
+    margin-top: 18px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    color: #0080c1;
+    font-size: 18px;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+    transition: background-size .3s;
+    animation: left 0.5s ease;
+}
+
+.link:hover {
+    background-size: 100% 2px;
+}
+
+@keyframes left {
+    0% {
+        opacity: 0;
+        margin-left: 100px;
+    }
+    100% {
+        opacity: 1;
+        margin-left: 0;
+    }
+}

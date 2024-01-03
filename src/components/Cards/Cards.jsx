@@ -1,4 +1,4 @@
-import hpImg from "./images/hp.svg"
+import hpImg from "./images/hp.svg";
 import { shuffle } from "lodash";
 import { useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
@@ -6,6 +6,8 @@ import styles from "./Cards.module.css";
 import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
+import BASE_URL from "../../api";
+import SuperItems from "../SuperItems/SuperItems";
 
 
 // Игра закончилась
@@ -18,6 +20,15 @@ const STATUS_PREVIEW = "STATUS_PREVIEW";
 
 // задержка для анимаций
 const delay = 500;
+
+function validRandom(openCards) {
+  const randomInt = Math.round(Math.random() * 10);
+  if (!openCards?.includes(randomInt)) {
+    return randomInt;
+  } else {
+    validRandom(openCards);
+  }
+}
 
 function getTimerValue(startDate, endDate) {
   if (!startDate && !endDate) {
@@ -45,18 +56,134 @@ function getTimerValue(startDate, endDate) {
  * pairsCount - сколько пар будет в игре
  * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
  */
-export function Cards({ pairsCount = 3, previewSeconds = 5, mode = false}) {
+export function Cards({ pairsCount = 3, previewSeconds = 5, mode = false }) {
+  // Уровень сложности
+  const [complexity] = useState(pairsCount === 9 ? 1 : null);
   // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
   const [cards, setCards] = useState([]);
   // Текущий статус игры
   const [status, setStatus] = useState(STATUS_PREVIEW);
 
+  // Последняя карта
+  const [endCard, setEndCard] = useState(null);
   // Дата начала игры
   const [gameStartDate, setGameStartDate] = useState(null);
   // Дата конца игры
   const [gameEndDate, setGameEndDate] = useState(null);
-
+  // Жизни
   const [hp, setHp] = useState(() => mode ? 3 : null);
+  // Суперсилы
+  const [superpowers, setSuperpowers] = useState([]);
+  // Ачивки
+  const [achievement, setAchievement] = useState(2);
+
+  useEffect(() => {
+      if (status === STATUS_WON) {
+        fetch(BASE_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              name: localStorage.name,
+              time: getTimerValue(gameStartDate, gameEndDate).minutes * 60 + getTimerValue(gameStartDate, gameEndDate).seconds,
+              achievements: () => {
+                if (complexity && achievement) {
+                  return [complexity, achievement]
+                } else if (complexity && !achievement){
+                  return [complexity]
+                } else if (!complexity && achievement){
+                  return [achievement]
+                } else {
+                  return []
+                }
+              }
+            })
+          }
+        ).then(r => {
+          console.log(r);
+        }).catch(error => {
+          console.log(error.message);
+        });
+      }
+    },
+    [status]
+  );
+
+  useEffect(() => {
+
+    if (superpowers?.includes(1)) {
+      console.log(superpowers, "Используется прозрение");
+      const oldCards = [];
+      const newCards = cards.map((card, index) => {
+        if (card.open) {
+          oldCards.push(index);
+        }
+        card.open = true;
+        return card;
+      });
+      setCards(newCards);
+      const pauseTime = new Date();
+      setGameEndDate(pauseTime);
+      setTimeout(() => {
+        setGameStartDate(prevStartDate => {
+          const timePaused = new Date().getTime() - pauseTime.getTime();
+          const newStartDate = new Date(prevStartDate.getTime() + timePaused);
+          setGameEndDate(null);
+          return newStartDate;
+        });
+        const newCards = cards.map((card, index) => {
+          if (oldCards?.includes(index)) {
+            card.open = true;
+            return card;
+          } else {
+            card.open = false;
+            return card;
+          }
+        });
+        setCards(newCards);
+      }, 5000);
+    }
+
+    if (superpowers?.includes(2)) {
+      console.log(superpowers, "Используется Алохомора");
+      const openCards = [];
+      cards.forEach(card => {
+        if (card.open) {
+          openCards.push(card);
+        }
+      });
+      if (openCards?.length % 2 !== 0 && endCard) {
+        const newCards = cards.map(card => {
+          if (card.rank === endCard.rank && card.suit === endCard.suit && card.id !== endCard.id) {
+            card.open = true;
+            return card;
+          }
+          return card;
+        });
+        setCards(newCards);
+      } else {
+        const random = validRandom();
+        const randomCard = cards[random];
+        const newCards = cards.map(card => {
+          if (card.rank === randomCard.rank && card.suit === randomCard.suit) {
+            card.open = true;
+            return card;
+          }
+          return card;
+        });
+        setCards(newCards);
+      }
+      const isPlayerWon = cards.every(card => card.open);
+
+      // Победа - все карты на поле открыты
+      if (isPlayerWon) {
+        finishGame(STATUS_WON);
+        return;
+      }
+    }
+
+    if (superpowers?.length !== 0) {
+      setAchievement(null);
+    }
+  }, [superpowers]);
 
   // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
@@ -78,7 +205,9 @@ export function Cards({ pairsCount = 3, previewSeconds = 5, mode = false}) {
   }
 
   function resetGame() {
-    mode && setHp(3)
+    setSuperpowers([]);
+    setAchievement(2);
+    mode && setHp(3);
     setGameStartDate(null);
     setGameEndDate(null);
     setTimer(getTimerValue(null, null));
@@ -93,6 +222,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5, mode = false}) {
    * - "Игра продолжается", если не случилось первых двух условий
    */
   const openCard = clickedCard => {
+    setEndCard(clickedCard);
     // Если карта уже открыта, то ничего не делаем
     if (clickedCard.open) {
       return;
@@ -233,9 +363,16 @@ export function Cards({ pairsCount = 3, previewSeconds = 5, mode = false}) {
             </>
           )}
         </div>
+        {status === STATUS_IN_PROGRESS && <SuperItems setSuperpowers={setSuperpowers} superpowers={superpowers} />}
         <div className={styles.hpBox}>
-          {(status === STATUS_IN_PROGRESS) && mode ? Array.from(Array(hp).keys()).map(i => <img key={i} className={styles.hp} src={hpImg} alt="Жизнь"/>) : null}
-
+          {(status === STATUS_IN_PROGRESS) && mode ? Array.from(
+            Array(hp).keys())
+            .map(i => <img
+              key={i}
+              className={styles.hp}
+              src={hpImg}
+              alt="Жизнь" />) : null
+          }
         </div>
         {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
       </div>

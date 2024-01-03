@@ -1,0 +1,58 @@
+.zIndex{
+    z-index: 300;
+}
+
+.superItem {
+    position: relative;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.superItem img {
+    width: 80%;
+    height: 80%;
+}
+
+.disabled {
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 500;
+    height: 100%;
+    width: 100%;
+    background: rgba(90, 114, 119, 0.89);
+}
+
+.popup {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.load {
+    z-index: -100;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    aspect-ratio: 1; /* ширина = высота */
+    border-radius: 50%; /* закругление углов */
+    background: darkturquoise; /* цвет */
+    animation: progress 5s cubic-bezier(.25, .4, .75, .6) infinite; /* скорость анимации */
+}
+@keyframes progress {
+    0% { clip-path: polygon(50% 50%, 50% -21%, 50% -21%, 50% -21%, 50% -21%, 50% -21%); }
+    25% { clip-path: polygon(50% 50%, 50% -21%, 121% 50%, 121% 50%, 121% 50%, 121% 50%); }
+    50% { clip-path: polygon(50% 50%, 50% -21%, 121% 50%, 50% 121%, 50% 121%, 50% 121%); }
+    75% { clip-path: polygon(50% 50%, 50% -21%, 121% 50%, 50% 121%, -21% 50%, -21% 50%); }
+    100% { clip-path: polygon(50% 50%, 50% -21%, 121% 50%, 50% 121%, -21% 50%, 50% -21%); }
+}
